@@ -1,14 +1,14 @@
 use amethyst::{
-    ecs::{prelude::*, System},
-    prelude::*,
+    core::transform::Transform,
+    ecs::{ReadStorage, System, WriteStorage},
 };
+
+use crate::component::{Player, Velocity};
 
 pub struct MovePlayer;
 
 impl<'a> System<'a> for MovePlayer {
-    type SystemData = ();
+    type SystemData = (ReadStorage<'a, Player>, WriteStorage<'a, Transform>, ReadStorage<'a, Velocity>);
 
-    fn run(&mut self, data: Self::SystemData) {
-        println!("Hello!");
-    }
+    fn run(&mut self, (players, transforms, velocities): Self::SystemData) {}
 }

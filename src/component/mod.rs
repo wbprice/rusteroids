@@ -1,5 +1,4 @@
 mod player;
+mod velocity;
 
-pub use self::{
-    player::Player
-};
+pub use self::{player::Player, velocity::Velocity};

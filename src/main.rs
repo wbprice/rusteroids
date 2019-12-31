@@ -10,12 +10,11 @@ use amethyst::{
 };
 
 mod component;
-mod system;
+mod entity;
 mod state;
+mod system;
 
-use crate::system::{
-    MovePlayer
-};
+use crate::system::MovePlayer;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
