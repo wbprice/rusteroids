@@ -1,4 +1,5 @@
 mod control_player;
-mod move_player;
+mod move_objects;
+mod collisions;
 
-pub use self::{control_player::ControlPlayer, move_player::MovePlayer};
+pub use self::{control_player::ControlPlayer, move_objects::MoveObjects, collisions::Collisions};

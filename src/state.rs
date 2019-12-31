@@ -9,7 +9,10 @@ use amethyst::{
 
 use log::info;
 
-use crate::entity::init_player_ship;
+use crate::entity::{
+    init_player_ship,
+    init_asteroid
+};
 
 pub struct MyState;
 
@@ -31,6 +34,7 @@ impl SimpleState for MyState {
         // Load our sprites and display them
         let sprites = load_sprites(world);
         init_player_ship(world, &sprites, &dimensions);
+        init_asteroid(world, &sprites, &dimensions);
     }
 
     fn handle_event(
