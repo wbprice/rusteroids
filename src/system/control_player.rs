@@ -1,14 +1,14 @@
 use amethyst::{
+    core::transform::Transform,
     ecs::{Join, Read, ReadStorage, System, WriteStorage},
     input::{InputHandler, StringBindings},
-    core::transform::Transform
 };
 
 use crate::component::{Player, Velocity};
 
-const THROTTLE_COEFFICIENT : f32 = 0.75;
-const YAW_COEFFICIENT : f32 = 0.25;
-const MAX_ANGULAR_VELOCITY : f32 = 3.0;
+const THROTTLE_COEFFICIENT: f32 = 0.75;
+const YAW_COEFFICIENT: f32 = 0.25;
+const MAX_ANGULAR_VELOCITY: f32 = 3.0;
 
 pub struct ControlPlayer;
 

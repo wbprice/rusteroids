@@ -13,7 +13,7 @@ impl<'a> System<'a> for MovePlayer {
         ReadStorage<'a, Player>,
         WriteStorage<'a, Transform>,
         ReadStorage<'a, Velocity>,
-        Read<'a, Time>
+        Read<'a, Time>,
     );
 
     fn run(&mut self, (players, mut transforms, velocities, time): Self::SystemData) {
