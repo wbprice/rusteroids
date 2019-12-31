@@ -20,15 +20,20 @@ impl<'a> System<'a> for ControlPlayer {
 
         // Should input handling be in it's own system?
         for (_player, velocity) in (&players, &mut velocities).join() {
-            dbg!(&throttle);
-            dbg!(&steering);
-
             if let Some(throttle) = throttle {
                 velocity.y += throttle;
             }
 
             if let Some(steering) = steering {
-                velocity.a += steering;
+                // Steering input with scaling
+                let angular_velocity = velocity.a + steering * 0.5;
+
+                // Maximum angular velocity is 5.0
+                if angular_velocity > 0.0 {
+                    velocity.a = angular_velocity.min(5.0);
+                } else {
+                    velocity.a = angular_velocity.max(-5.0);
+                }
             }
         }
     }
