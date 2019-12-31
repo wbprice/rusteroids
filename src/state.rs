@@ -98,11 +98,12 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
         )
     };
 
-    (0..1).map(|i| SpriteRender {
-        sprite_sheet: sheet_handle.clone(),
-        sprite_number: i
-    })
-    .collect()
+    (0..1)
+        .map(|i| SpriteRender {
+            sprite_sheet: sheet_handle.clone(),
+            sprite_number: i,
+        })
+        .collect()
 }
 
 fn init_sprite(world: &mut World, sprites: &[SpriteRender], dimensions: &ScreenDimensions) {
