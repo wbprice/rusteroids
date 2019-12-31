@@ -27,8 +27,8 @@ impl SimpleState for MyState {
         init_camera(world, &dimensions);
 
         // Load our sprites and display them
-        let sprite = load_sprites(world);
-        init_sprite(world, &sprite, &dimensions);
+        let sprites = load_sprites(world);
+        init_sprite(world, &sprites, &dimensions);
     }
 
     fn handle_event(
