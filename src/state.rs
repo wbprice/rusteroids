@@ -27,7 +27,7 @@ impl SimpleState for MyState {
         init_camera(world, &dimensions);
 
         // Load our sprites and display them
-        let sprite = load_sprite(world);
+        let sprite = load_sprites(world);
         init_sprite(world, &sprite, &dimensions);
     }
 
@@ -70,7 +70,7 @@ fn init_camera(world: &mut World, dimensions: &ScreenDimensions) {
         .build();
 }
 
-fn load_sprite(world: &mut World) -> SpriteRender {
+fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
     // Load the texture for our sprites. We'll later need to
     // add a handle to this texture to our `SpriteRender`s, so
     // we need to keep a reference to it.
@@ -98,13 +98,14 @@ fn load_sprite(world: &mut World) -> SpriteRender {
         )
     };
 
-    SpriteRender {
-        sprite_sheet: sheet_handle,
-        sprite_number: 0
-    }
+    (0..1).map(|i| SpriteRender {
+        sprite_sheet: sheet_handle.clone(),
+        sprite_number: i
+    })
+    .collect()
 }
 
-fn init_sprite(world: &mut World, sprite: &SpriteRender, dimensions: &ScreenDimensions) {
+fn init_sprite(world: &mut World, sprites: &[SpriteRender], dimensions: &ScreenDimensions) {
     // Center our sprites around the center of the window
     let x = 100. + dimensions.width() * 0.5;
     let y = 100. + dimensions.height() * 0.5;
@@ -115,9 +116,12 @@ fn init_sprite(world: &mut World, sprite: &SpriteRender, dimensions: &ScreenDime
     // well as the transform. If you want to add behaviour to your sprites,
     // you'll want to add a custom `Component` that will identify them, and a
     // `System` that will iterate over them. See https://book.amethyst.rs/stable/concepts/system.html
+
+    let ship_sprite = &sprites[0];
+
     world
         .create_entity()
-        .with(sprite.clone())
+        .with(ship_sprite.clone())
         .with(transform)
         .build();
 }
