@@ -2,7 +2,6 @@ use amethyst::{
     core::timing::Time,
     core::transform::Transform,
     ecs::{Join, Read, ReadStorage, System, WriteStorage},
-    input::{InputHandler, StringBindings},
 };
 
 use crate::component::{Player, Velocity};
