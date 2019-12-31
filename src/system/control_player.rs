@@ -26,6 +26,10 @@ impl<'a> System<'a> for ControlPlayer {
             if let Some(throttle) = throttle {
                 velocity.y += throttle;
             }
+
+            if let Some(steering) = steering {
+                velocity.a += steering;
+            }
         }
     }
 }

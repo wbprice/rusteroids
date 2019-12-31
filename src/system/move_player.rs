@@ -22,6 +22,7 @@ impl<'a> System<'a> for MovePlayer {
         for (_player, local, velocity) in (&players, &mut transforms, &velocities).join() {
             local.prepend_translation_x(velocity.x * time.delta_seconds());
             local.prepend_translation_y(velocity.y * time.delta_seconds());
+            local.prepend_rotation_z_axis(velocity.a * time.delta_seconds());
         }
     }
 }
