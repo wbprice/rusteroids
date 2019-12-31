@@ -1,6 +1,6 @@
 use amethyst::{
-    core::transform::{Parent, Transform},
-    ecs::{Entities, Entity, Join, Read, ReadExpect, ReadStorage, System, WriteStorage},
+    core::transform::Transform,
+    ecs::{Entities, Join, Read, ReadExpect, ReadStorage, System, WriteStorage},
     input::{InputHandler, StringBindings},
     renderer::SpriteRender,
 };
@@ -26,7 +26,6 @@ impl<'a> System<'a> for ControlPlayer {
         WriteStorage<'a, Transform>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, Laser>,
-        WriteStorage<'a, Parent>,
     );
 
     fn run(
@@ -40,18 +39,15 @@ impl<'a> System<'a> for ControlPlayer {
             mut transforms,
             mut velocities,
             mut lasers,
-            mut parents,
         ): Self::SystemData,
     ) {
         let throttle = input.axis_value("throttle");
         let steering = input.axis_value("steering");
         let lasers_firing = input.action_is_down("lasers");
 
-        let mut ships_shooting: Vec<Entity> = vec![];
+        let mut ships_shooting: Vec<Transform> = vec![];
 
-        for (entity, player, local, velocity) in
-            (&entities, &players, &mut transforms, &mut velocities).join()
-        {
+        for (_player, local, velocity) in (&players, &mut transforms, &mut velocities).join() {
             if let Some(throttle) = throttle {
                 // The new values for x and y velocity depend on the current heading
                 // "magnitude" is [0; pi] where pi is a half rotation
@@ -76,14 +72,18 @@ impl<'a> System<'a> for ControlPlayer {
             if let Some(lasers_firing) = lasers_firing {
                 // Is the laser button down?
                 if lasers_firing {
-                    ships_shooting.push(entity)
+                    ships_shooting.push(local.clone());
                 }
             }
         }
 
-        for ship_entity in ships_shooting {
-            let mut transform = Transform::default();
-            transform.prepend_translation_x(24.0);
+        for ship_local in ships_shooting {
+            let transform = ship_local.clone();
+            let (_, _, magnitude) = ship_local.rotation().euler_angles();
+
+            let laser_displacement = 300.0;
+            let velocity_x = magnitude.cos() * laser_displacement;
+            let velocity_y = magnitude.sin() * laser_displacement;
 
             entities
                 .build_entity()
@@ -95,17 +95,11 @@ impl<'a> System<'a> for ControlPlayer {
                     &mut sprites,
                 )
                 .with(transform, &mut transforms)
-                .with(
-                    Parent {
-                        entity: ship_entity,
-                    },
-                    &mut parents,
-                )
                 .with(Laser {}, &mut lasers)
                 .with(
                     Velocity {
-                        x: 0.,
-                        y: 0.,
+                        x: velocity_x,
+                        y: velocity_y,
                         a: 0.,
                     },
                     &mut velocities,
