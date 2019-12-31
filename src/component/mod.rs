@@ -1,4 +1,5 @@
+mod asteroid;
 mod player;
 mod velocity;
 
-pub use self::{player::Player, velocity::Velocity};
+pub use self::{asteroid::Asteroid, player::Player, velocity::Velocity};

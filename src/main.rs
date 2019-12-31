@@ -15,7 +15,7 @@ mod entity;
 mod state;
 mod system;
 
-use crate::system::{ControlPlayer, MovePlayer};
+use crate::system::{Collisions, ControlPlayer, MoveObjects};
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -39,8 +39,9 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderFlat2D::default()),
         )?
         .with_bundle(input_bundle)?
-        .with(MovePlayer, "move_player_system", &[])
-        .with(ControlPlayer, "control_player_system", &[]);
+        .with(MoveObjects, "move_objects_system", &[])
+        .with(ControlPlayer, "control_player_system", &[])
+        .with(Collisions, "collisions_system", &[]);
 
     let mut game = Application::new(resources, state::MyState, game_data)?;
     game.run();
