@@ -9,5 +9,7 @@
             neg: Key(Down)
         )
     },
-    actions: {}
+    actions: {
+        "lasers": [[Key(Space)]]
+    }
 )
