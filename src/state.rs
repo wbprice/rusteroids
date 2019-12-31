@@ -28,7 +28,7 @@ impl SimpleState for MyState {
 
         // Load our sprites and display them
         let sprites = load_sprites(world);
-        init_sprites(world, &sprites, &dimensions);
+        init_sprite(world, &sprites, &dimensions);
     }
 
     fn handle_event(
@@ -78,7 +78,7 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
         let loader = world.read_resource::<Loader>();
         let texture_storage = world.read_resource::<AssetStorage<Texture>>();
         loader.load(
-            "sprites/logo.png",
+            "sprites/spritesheet.png",
             ImageFormat::default(),
             (),
             &texture_storage,
@@ -91,17 +91,14 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
         let loader = world.read_resource::<Loader>();
         let sheet_storage = world.read_resource::<AssetStorage<SpriteSheet>>();
         loader.load(
-            "sprites/logo.ron",
+            "sprites/spritesheet.ron",
             SpriteSheetFormat(texture_handle),
             (),
             &sheet_storage,
         )
     };
 
-    // Create our sprite renders. Each will have a handle to the texture
-    // that it renders from. The handle is safe to clone, since it just
-    // references the asset.
-    (0..3)
+    (0..1)
         .map(|i| SpriteRender {
             sprite_sheet: sheet_handle.clone(),
             sprite_number: i,
@@ -109,22 +106,23 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
         .collect()
 }
 
-fn init_sprites(world: &mut World, sprites: &[SpriteRender], dimensions: &ScreenDimensions) {
-    for (i, sprite) in sprites.iter().enumerate() {
-        // Center our sprites around the center of the window
-        let x = (i as f32 - 1.) * 100. + dimensions.width() * 0.5;
-        let y = (i as f32 - 1.) * 100. + dimensions.height() * 0.5;
-        let mut transform = Transform::default();
-        transform.set_translation_xyz(x, y, 0.);
+fn init_sprite(world: &mut World, sprites: &[SpriteRender], dimensions: &ScreenDimensions) {
+    // Center our sprites around the center of the window
+    let x = 100. + dimensions.width() * 0.5;
+    let y = 100. + dimensions.height() * 0.5;
+    let mut transform = Transform::default();
+    transform.set_translation_xyz(x, y, 0.);
 
-        // Create an entity for each sprite and attach the `SpriteRender` as
-        // well as the transform. If you want to add behaviour to your sprites,
-        // you'll want to add a custom `Component` that will identify them, and a
-        // `System` that will iterate over them. See https://book.amethyst.rs/stable/concepts/system.html
-        world
-            .create_entity()
-            .with(sprite.clone())
-            .with(transform)
-            .build();
-    }
+    // Create an entity for each sprite and attach the `SpriteRender` as
+    // well as the transform. If you want to add behaviour to your sprites,
+    // you'll want to add a custom `Component` that will identify them, and a
+    // `System` that will iterate over them. See https://book.amethyst.rs/stable/concepts/system.html
+
+    let ship_sprite = &sprites[0];
+
+    world
+        .create_entity()
+        .with(ship_sprite.clone())
+        .with(transform)
+        .build();
 }

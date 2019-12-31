@@ -9,7 +9,7 @@ amethyst = "0.13.0"
 log = { version = "0.4.8", features = ["serde"] }
 
 [features]
-default = ["vulkan"]
+default = ["metal"]
 empty = ["amethyst/empty"]
 metal = ["amethyst/metal"]
 vulkan = ["amethyst/vulkan"]
