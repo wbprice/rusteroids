@@ -1,5 +1,6 @@
 use amethyst::{
     core::transform::TransformBundle,
+    input::{InputBundle, StringBindings},
     prelude::*,
     renderer::{
         plugins::{RenderFlat2D, RenderToWindow},
@@ -14,7 +15,10 @@ mod entity;
 mod state;
 mod system;
 
-use crate::system::MovePlayer;
+use crate::system::{
+    MovePlayer,
+    ControlPlayer
+};
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -23,6 +27,9 @@ fn main() -> amethyst::Result<()> {
 
     let resources = app_root.join("resources");
     let display_config = resources.join("display_config.ron");
+    let binding_path = resources.join("bindings.ron");
+    let input_bundle = InputBundle::<StringBindings>::new()
+        .with_bindings_from_file(binding_path)?;
 
     let game_data = GameDataBuilder::default()
         .with_bundle(TransformBundle::new())?
@@ -34,7 +41,9 @@ fn main() -> amethyst::Result<()> {
                 )
                 .with_plugin(RenderFlat2D::default()),
         )?
-        .with(MovePlayer, "move_player_system", &[]);
+        .with_bundle(input_bundle)?
+        .with(MovePlayer, "move_player_system", &[])
+        .with(ControlPlayer, "control_player_system", &[]);
 
     let mut game = Application::new(resources, state::MyState, game_data)?;
     game.run();
