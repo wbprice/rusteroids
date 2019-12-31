@@ -1,7 +1,4 @@
-mod player_ship;
 mod asteroid;
+mod player_ship;
 
-pub use self::{
-    player_ship::init_player_ship,
-    asteroid::init_asteroid
-};
+pub use self::{asteroid::init_asteroid, player_ship::init_player_ship};

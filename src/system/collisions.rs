@@ -12,7 +12,7 @@ impl<'a> System<'a> for Collisions {
     type SystemData = (
         ReadStorage<'a, Asteroid>,
         WriteStorage<'a, Transform>,
-        WriteStorage<'a, Velocity>
+        WriteStorage<'a, Velocity>,
     );
 
     fn run(&mut self, (asteroids, mut transforms, velocities): Self::SystemData) {}

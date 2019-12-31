@@ -9,10 +9,7 @@ use amethyst::{
 
 use log::info;
 
-use crate::entity::{
-    init_player_ship,
-    init_asteroid
-};
+use crate::entity::{init_asteroid, init_player_ship};
 
 pub struct MyState;
 
@@ -47,15 +44,6 @@ impl SimpleState for MyState {
             if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
                 return Trans::Quit;
             }
-
-            // Listen to any key events
-            if let Some(event) = get_key(&event) {
-                info!("handling key event: {:?}", event);
-            }
-
-            // If you're looking for a more sophisticated event handling solution,
-            // including key bindings and gamepad support, please have a look at
-            // https://book.amethyst.rs/stable/pong-tutorial/pong-tutorial-03.html#capturing-user-input
         }
 
         // Keep going
@@ -104,7 +92,7 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
         )
     };
 
-    (0..1)
+    (0..2)
         .map(|i| SpriteRender {
             sprite_sheet: sheet_handle.clone(),
             sprite_number: i,

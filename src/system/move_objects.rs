@@ -4,7 +4,7 @@ use amethyst::{
     ecs::{Join, Read, ReadStorage, System, WriteStorage},
 };
 
-use crate::component::{Velocity};
+use crate::component::Velocity;
 
 pub struct MoveObjects;
 

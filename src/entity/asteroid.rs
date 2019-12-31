@@ -1,15 +1,11 @@
 use amethyst::{core::Transform, prelude::*, renderer::SpriteRender, window::ScreenDimensions};
 
-use crate::component::{Player, Velocity};
+use crate::component::{Asteroid, Velocity};
 
-pub fn init_asteroid(
-    world: &mut World,
-    sprites: &[SpriteRender],
-    dimensions: &ScreenDimensions,
-) {
+pub fn init_asteroid(world: &mut World, sprites: &[SpriteRender], dimensions: &ScreenDimensions) {
     // Center our sprites around the center of the window
-    let x = 100. + dimensions.width() * 0.5;
-    let y = 100. + dimensions.height() * 0.5;
+    let x = dimensions.width() * 0.5;
+    let y = dimensions.height() * 0.5;
     let mut transform = Transform::default();
     transform.set_translation_xyz(x, y, 0.);
 
@@ -23,12 +19,12 @@ pub fn init_asteroid(
     world
         .create_entity()
         .with(asteroid_sprite.clone())
+        .with(Asteroid {})
         .with(transform)
-        .with(Player {})
         .with(Velocity {
-            x: -0.5,
-            y: -0.5,
-            a: -2.0,
+            x: -3.0,
+            y: -2.0,
+            a: -1.0,
         })
         .build();
 }
