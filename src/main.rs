@@ -12,6 +12,7 @@ use amethyst::{
 
 mod component;
 mod entity;
+mod resource;
 mod state;
 mod system;
 

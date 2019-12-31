@@ -1,10 +1,14 @@
 use amethyst::{
     core::transform::Transform,
-    ecs::{Join, Read, ReadStorage, System, WriteStorage},
+    ecs::{Entities, Join, Read, ReadExpect, ReadStorage, System, WriteStorage},
     input::{InputHandler, StringBindings},
+    renderer::SpriteRender,
 };
 
-use crate::component::{Player, Velocity};
+use crate::{
+    component::{Laser, Player, Velocity},
+    resource::SpriteResource,
+};
 
 const THROTTLE_COEFFICIENT: f32 = 0.75;
 const YAW_COEFFICIENT: f32 = 0.25;
@@ -15,16 +19,35 @@ pub struct ControlPlayer;
 impl<'a> System<'a> for ControlPlayer {
     type SystemData = (
         Read<'a, InputHandler<StringBindings>>,
+        ReadExpect<'a, SpriteResource>,
+        WriteStorage<'a, SpriteRender>,
+        Entities<'a>,
         ReadStorage<'a, Player>,
-        ReadStorage<'a, Transform>,
+        WriteStorage<'a, Transform>,
         WriteStorage<'a, Velocity>,
+        WriteStorage<'a, Laser>,
     );
 
-    fn run(&mut self, (input, players, transforms, mut velocities): Self::SystemData) {
+    fn run(
+        &mut self,
+        (
+            input,
+            sprite_resources,
+            mut sprites,
+            entities,
+            players,
+            mut transforms,
+            mut velocities,
+            mut lasers,
+        ): Self::SystemData,
+    ) {
         let throttle = input.axis_value("throttle");
         let steering = input.axis_value("steering");
+        let lasers_firing = input.action_is_down("lasers");
 
-        for (_player, local, velocity) in (&players, &transforms, &mut velocities).join() {
+        let mut ships_shooting: Vec<Transform> = vec![];
+
+        for (_player, local, velocity) in (&players, &mut transforms, &mut velocities).join() {
             if let Some(throttle) = throttle {
                 // The new values for x and y velocity depend on the current heading
                 // "magnitude" is [0; pi] where pi is a half rotation
@@ -45,6 +68,43 @@ impl<'a> System<'a> for ControlPlayer {
                     velocity.a = angular_velocity.max(-MAX_ANGULAR_VELOCITY);
                 }
             }
+
+            if let Some(lasers_firing) = lasers_firing {
+                // Is the laser button down?
+                if lasers_firing {
+                    ships_shooting.push(local.clone());
+                }
+            }
+        }
+
+        for ship_local in ships_shooting {
+            let transform = ship_local.clone();
+            let (_, _, magnitude) = ship_local.rotation().euler_angles();
+
+            let laser_displacement = 300.0;
+            let velocity_x = magnitude.cos() * laser_displacement;
+            let velocity_y = magnitude.sin() * laser_displacement;
+
+            entities
+                .build_entity()
+                .with(
+                    SpriteRender {
+                        sprite_sheet: sprite_resources.sprite_sheet.clone(),
+                        sprite_number: 2,
+                    },
+                    &mut sprites,
+                )
+                .with(transform, &mut transforms)
+                .with(Laser {}, &mut lasers)
+                .with(
+                    Velocity {
+                        x: velocity_x,
+                        y: velocity_y,
+                        a: 0.,
+                    },
+                    &mut velocities,
+                )
+                .build();
         }
     }
 }

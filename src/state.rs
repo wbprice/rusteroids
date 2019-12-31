@@ -7,7 +7,11 @@ use amethyst::{
     window::ScreenDimensions,
 };
 
-use crate::entity::{init_asteroid, init_player_ship};
+use crate::{
+    component::Laser,
+    entity::{init_asteroid, init_player_ship},
+    resource::SpriteResource,
+};
 
 pub struct MyState;
 
@@ -22,12 +26,15 @@ impl SimpleState for MyState {
         // place our sprites correctly later. We'll clone this since we'll
         // pass the world mutably to the following functions.
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
+        // Do prework for setting up lasers
+        world.register::<Laser>();
 
         // Place the camera
         init_camera(world, &dimensions);
 
         // Load our sprites and display them
         let sprites = load_sprites(world);
+
         init_player_ship(world, &sprites, &dimensions);
         // Initialize 12 asteroids
         for _ in 0..12 {
@@ -92,6 +99,11 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
             &sheet_storage,
         )
     };
+
+    // Mutate the world with a sheet handle
+    world.insert(SpriteResource {
+        sprite_sheet: sheet_handle.clone(),
+    });
 
     (0..2)
         .map(|i| SpriteRender {
