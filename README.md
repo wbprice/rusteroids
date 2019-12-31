@@ -15,6 +15,8 @@ This project template will get you from 0 to drawing something on the screen in 
 
 ## Quickstart
 
+![2019-12-31 14 24 54](https://user-images.githubusercontent.com/2590422/71632120-bfdcb980-2bda-11ea-9372-14298236b332.gif)
+
 - Clone the repository
 
 ```bash
