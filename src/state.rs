@@ -8,9 +8,9 @@ use amethyst::{
 };
 
 use crate::{
+    component::Laser,
     entity::{init_asteroid, init_player_ship},
-    component::{Laser},
-    resource::{SpriteResource}
+    resource::SpriteResource,
 };
 
 pub struct MyState;
@@ -102,7 +102,7 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
 
     // Mutate the world with a sheet handle
     world.insert(SpriteResource {
-        sprite_sheet: sheet_handle.clone()
+        sprite_sheet: sheet_handle.clone(),
     });
 
     (0..2)

@@ -2,12 +2,12 @@ use amethyst::{
     core::transform::{Parent, Transform},
     ecs::{Entities, Entity, Join, Read, ReadExpect, ReadStorage, System, WriteStorage},
     input::{InputHandler, StringBindings},
-    renderer::{SpriteRender}
+    renderer::SpriteRender,
 };
 
 use crate::{
     component::{Laser, Player, Velocity},
-    resource::{SpriteResource}
+    resource::SpriteResource,
 };
 
 const THROTTLE_COEFFICIENT: f32 = 0.75;
@@ -31,7 +31,17 @@ impl<'a> System<'a> for ControlPlayer {
 
     fn run(
         &mut self,
-        (input, sprite_resources, mut sprites, entities, players, mut transforms, mut velocities, mut lasers, mut parents): Self::SystemData,
+        (
+            input,
+            sprite_resources,
+            mut sprites,
+            entities,
+            players,
+            mut transforms,
+            mut velocities,
+            mut lasers,
+            mut parents,
+        ): Self::SystemData,
     ) {
         let throttle = input.axis_value("throttle");
         let steering = input.axis_value("steering");
@@ -72,13 +82,19 @@ impl<'a> System<'a> for ControlPlayer {
         }
 
         for ship_entity in ships_shooting {
+            let mut transform = Transform::default();
+            transform.prepend_translation_x(24.0);
+
             entities
                 .build_entity()
-                .with(SpriteRender {
-                    sprite_sheet: sprite_resources.sprite_sheet.clone(),
-                    sprite_number: 3
-                }, &mut sprites)
-                .with(Transform::default(), &mut transforms)
+                .with(
+                    SpriteRender {
+                        sprite_sheet: sprite_resources.sprite_sheet.clone(),
+                        sprite_number: 2,
+                    },
+                    &mut sprites,
+                )
+                .with(transform, &mut transforms)
                 .with(
                     Parent {
                         entity: ship_entity,

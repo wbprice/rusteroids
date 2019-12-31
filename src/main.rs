@@ -12,8 +12,8 @@ use amethyst::{
 
 mod component;
 mod entity;
-mod state;
 mod resource;
+mod state;
 mod system;
 
 use crate::system::{Collisions, ControlPlayer, MoveObjects};
