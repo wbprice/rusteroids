@@ -1,0 +1,13 @@
+(
+    axes: {
+        "steering": Emulated(
+            pos: Key(Right),
+            neg: Key(Left)
+        ),
+        "throttle": Emulated(
+            pos: Key(Up),
+            neg: Key(Down)
+        )
+    },
+    actions: {}
+)
