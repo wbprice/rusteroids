@@ -1,7 +1,6 @@
 use amethyst::{
-    core::timing::Time,
     core::transform::Transform,
-    ecs::{Join, Read, ReadStorage, System, WriteStorage},
+    ecs::{ReadStorage, System, WriteStorage},
 };
 
 use crate::component::{Asteroid, Velocity};
@@ -15,5 +14,5 @@ impl<'a> System<'a> for Collisions {
         WriteStorage<'a, Velocity>,
     );
 
-    fn run(&mut self, (asteroids, mut transforms, velocities): Self::SystemData) {}
+    fn run(&mut self, (_asteroids, mut _transforms, _velocities): Self::SystemData) {}
 }

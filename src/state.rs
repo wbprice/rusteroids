@@ -1,13 +1,11 @@
 use amethyst::{
     assets::{AssetStorage, Loader},
     core::transform::Transform,
-    input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
+    input::{is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
     renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
     window::ScreenDimensions,
 };
-
-use log::info;
 
 use crate::entity::{init_asteroid, init_player_ship};
 
@@ -31,7 +29,10 @@ impl SimpleState for MyState {
         // Load our sprites and display them
         let sprites = load_sprites(world);
         init_player_ship(world, &sprites, &dimensions);
-        init_asteroid(world, &sprites, &dimensions);
+        // Initialize 12 asteroids
+        for _ in 0..12 {
+            init_asteroid(world, &sprites, &dimensions);
+        }
     }
 
     fn handle_event(
