@@ -95,7 +95,7 @@ impl<'a> System<'a> for ControlPlayer {
                     &mut sprites,
                 )
                 .with(transform, &mut transforms)
-                .with(Laser {}, &mut lasers)
+                .with(Laser::new(), &mut lasers)
                 .with(
                     Velocity {
                         x: velocity_x,
