@@ -1,5 +1,5 @@
 use amethyst::{
-    core::{math::Point3, Transform},
+    core::Transform,
     prelude::*,
     renderer::{debug_drawing::DebugLinesComponent, palette::Srgba, SpriteRender},
     window::ScreenDimensions,
@@ -25,12 +25,7 @@ pub fn init_player_ship(
 
     let ship_sprite = &sprites[0];
     let mut debug_component = DebugLinesComponent::new();
-    debug_component.add_circle_2d(
-        [x, y, 0.0].into(),
-        24.0,
-        12,
-        Srgba::new(0.3, 0.3, 1.0, 1.0),
-    );
+    debug_component.add_circle_2d([x, y, 0.0].into(), 24.0, 12, Srgba::new(0.3, 0.3, 1.0, 1.0));
 
     world
         .create_entity()

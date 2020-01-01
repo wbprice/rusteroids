@@ -33,9 +33,7 @@ impl SimpleState for MyState {
         // Do prework for setting up lasers
         world.register::<Laser>();
         world.insert(DebugLines::new());
-        world.insert(DebugLinesParams {
-            line_width: 2.0
-        });
+        world.insert(DebugLinesParams { line_width: 2.0 });
 
         // Place the camera
         init_camera(world, &dimensions);

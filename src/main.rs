@@ -3,7 +3,7 @@ use amethyst::{
     input::{InputBundle, StringBindings},
     prelude::*,
     renderer::{
-        plugins::{RenderFlat2D, RenderDebugLines, RenderToWindow},
+        plugins::{RenderDebugLines, RenderFlat2D, RenderToWindow},
         types::DefaultBackend,
         RenderingBundle,
     },
@@ -16,7 +16,9 @@ mod resource;
 mod state;
 mod system;
 
-use crate::system::{Collisions, ControlPlayer, LasersDamageAsteroids, LasersExpire, MoveObjects, DebugBoxes};
+use crate::system::{
+    Collisions, ControlPlayer, DebugBoxes, LasersDamageAsteroids, LasersExpire, MoveObjects,
+};
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -38,7 +40,7 @@ fn main() -> amethyst::Result<()> {
                         .with_clear([0.34, 0.36, 0.52, 1.0]),
                 )
                 .with_plugin(RenderFlat2D::default())
-                .with_plugin(RenderDebugLines::default())
+                .with_plugin(RenderDebugLines::default()),
         )?
         .with_bundle(input_bundle)?
         .with(MoveObjects, "move_objects_system", &[])

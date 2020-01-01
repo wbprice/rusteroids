@@ -1,4 +1,9 @@
-use amethyst::{core::Transform, prelude::*, renderer::SpriteRender, window::ScreenDimensions};
+use amethyst::{
+    core::Transform,
+    prelude::*,
+    renderer::{debug_drawing::DebugLinesComponent, palette::Srgba, SpriteRender},
+    window::ScreenDimensions,
+};
 use rand::prelude::*;
 
 use crate::component::{Asteroid, Velocity};
@@ -26,12 +31,15 @@ pub fn init_asteroid(world: &mut World, sprites: &[SpriteRender], dimensions: &S
     let y = dimensions.height() * y_coefficient;
     let mut transform = Transform::default();
     transform.set_translation_xyz(x, y, 0.);
+    let mut debug_component = DebugLinesComponent::new();
+    debug_component.add_circle_2d([x, y, 0.0].into(), 32.0, 12, Srgba::new(0.3, 0.3, 1.0, 1.0));
 
     world
         .create_entity()
         .with(asteroid_sprite.clone())
         .with(Asteroid {})
         .with(transform)
+        .with(debug_component)
         .with(Velocity {
             x: x_velocity,
             y: y_velocity,
