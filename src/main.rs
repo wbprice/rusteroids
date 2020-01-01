@@ -16,7 +16,7 @@ mod resource;
 mod state;
 mod system;
 
-use crate::system::{Collisions, ControlPlayer, LasersExpire, MoveObjects};
+use crate::system::{Collisions, ControlPlayer, LasersDamageAsteroids, LasersExpire, MoveObjects};
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -43,7 +43,8 @@ fn main() -> amethyst::Result<()> {
         .with(MoveObjects, "move_objects_system", &[])
         .with(ControlPlayer, "control_player_system", &[])
         .with(Collisions, "collisions_system", &[])
-        .with(LasersExpire, "lasers_expire", &[]);
+        .with(LasersExpire, "lasers_expire", &[])
+        .with(LasersDamageAsteroids, "lasers_damage_asteroids", &[]);
 
     let mut game = Application::new(resources, state::MyState, game_data)?;
     game.run();
