@@ -47,10 +47,11 @@ impl<'a> System<'a> for DebugBoxes {
             let pos_x = local.translation().x;
             let pos_y = local.translation().y;
             let mut debug_component = DebugLinesComponent::new();
-            debug_component.add_circle_2d(
-                [pos_x, pos_y, 0.0].into(),
-                24.0,
-                12,
+            debug_component.add_rotated_rectangle(
+                [(pos_x - 32.0), (pos_y - 16.0)].into(),
+                [(pos_x + 32.0), (pos_y + 16.0)].into(),
+                0.0,
+                *local.rotation(),
                 Srgba::new(0.3, 0.3, 1.0, 1.0),
             );
 
