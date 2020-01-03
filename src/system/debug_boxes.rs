@@ -4,7 +4,7 @@ use amethyst::{
     renderer::{debug_drawing::DebugLinesComponent, palette::Srgba},
 };
 
-use crate::component::{Asteroid, Laser, Player};
+use crate::component::{Asteroid, Laser, Player, SmallAsteroid};
 
 pub struct DebugBoxes;
 
@@ -13,6 +13,7 @@ impl<'a> System<'a> for DebugBoxes {
         Entities<'a>,
         ReadStorage<'a, Player>,
         ReadStorage<'a, Asteroid>,
+        ReadStorage<'a, SmallAsteroid>,
         ReadStorage<'a, Laser>,
         WriteStorage<'a, DebugLinesComponent>,
         ReadStorage<'a, Transform>,
@@ -20,7 +21,7 @@ impl<'a> System<'a> for DebugBoxes {
 
     fn run(
         &mut self,
-        (entities, players, asteroids, lasers, mut debug_lines, transforms): Self::SystemData,
+        (entities, players, asteroids, small_asteroids, lasers, mut debug_lines, transforms): Self::SystemData,
     ) {
         let mut debug_lines_to_update: Vec<(Entity, DebugLinesComponent)> = vec![];
 
@@ -51,6 +52,23 @@ impl<'a> System<'a> for DebugBoxes {
             debug_component.add_circle_2d(
                 [pos_x, pos_y, 0.0].into(),
                 32.0,
+                12,
+                Srgba::new(0.3, 0.3, 1.0, 1.0),
+            );
+
+            debug_lines_to_update.push((entity, debug_component));
+        }
+
+        // Update debug components for the asteroids
+        for (entity, _small_asteroid, _debug_line, local) in
+            (&entities, &small_asteroids, &debug_lines, &transforms).join()
+        {
+            let pos_x = local.translation().x;
+            let pos_y = local.translation().y;
+            let mut debug_component = DebugLinesComponent::new();
+            debug_component.add_circle_2d(
+                [pos_x, pos_y, 0.0].into(),
+                16.0,
                 12,
                 Srgba::new(0.3, 0.3, 1.0, 1.0),
             );
