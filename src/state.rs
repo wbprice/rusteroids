@@ -4,8 +4,7 @@ use amethyst::{
     input::{is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
     renderer::{
-        debug_drawing::{DebugLines, DebugLinesComponent, DebugLinesParams},
-        plugins::RenderDebugLines,
+        debug_drawing::{DebugLines, DebugLinesParams},
         Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture,
     },
     window::ScreenDimensions,
