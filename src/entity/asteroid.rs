@@ -32,13 +32,7 @@ pub fn init_asteroid(world: &mut World, sprites: &[SpriteRender], dimensions: &S
     let mut transform = Transform::default();
     transform.set_translation_xyz(x, y, 0.);
     let mut debug_component = DebugLinesComponent::new();
-    debug_component.add_rotated_rectangle(
-        [(x - 32.0), (y - 16.0)].into(),
-        [(x + 32.0), (y + 16.0)].into(),
-        0.0,
-        *transform.rotation(),
-        Srgba::new(0.3, 0.3, 1.0, 1.0),
-    );
+    debug_component.add_circle_2d([x, y, 0.0].into(), 36.0, 12, Srgba::new(0.3, 0.3, 1.0, 1.0));
 
     world
         .create_entity()
