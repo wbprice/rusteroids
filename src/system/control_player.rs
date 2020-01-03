@@ -2,7 +2,7 @@ use amethyst::{
     core::transform::Transform,
     ecs::{Entities, Join, Read, ReadExpect, ReadStorage, System, WriteStorage},
     input::{InputHandler, StringBindings},
-    renderer::SpriteRender,
+    renderer::{debug_drawing::DebugLinesComponent, palette::Srgba, SpriteRender},
 };
 
 use crate::{
@@ -10,7 +10,7 @@ use crate::{
     resource::SpriteResource,
 };
 
-const THROTTLE_COEFFICIENT: f32 = 0.75;
+const THROTTLE_COEFFICIENT: f32 = 1.25;
 const YAW_COEFFICIENT: f32 = 0.25;
 const MAX_ANGULAR_VELOCITY: f32 = 3.0;
 
@@ -26,6 +26,7 @@ impl<'a> System<'a> for ControlPlayer {
         WriteStorage<'a, Transform>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, Laser>,
+        WriteStorage<'a, DebugLinesComponent>,
     );
 
     fn run(
@@ -39,6 +40,7 @@ impl<'a> System<'a> for ControlPlayer {
             mut transforms,
             mut velocities,
             mut lasers,
+            mut debug_lines,
         ): Self::SystemData,
     ) {
         let throttle = input.axis_value("throttle");
@@ -85,6 +87,17 @@ impl<'a> System<'a> for ControlPlayer {
             let velocity_x = magnitude.cos() * laser_displacement;
             let velocity_y = magnitude.sin() * laser_displacement;
 
+            let pos_x = transform.translation().x;
+            let pos_y = transform.translation().x;
+
+            let mut debug_component = DebugLinesComponent::new();
+            debug_component.add_circle_2d(
+                [pos_x, pos_y, 0.0].into(),
+                6.0,
+                12,
+                Srgba::new(0.3, 0.3, 1.0, 1.0),
+            );
+
             entities
                 .build_entity()
                 .with(
@@ -94,6 +107,7 @@ impl<'a> System<'a> for ControlPlayer {
                     },
                     &mut sprites,
                 )
+                .with(debug_component, &mut debug_lines)
                 .with(transform, &mut transforms)
                 .with(Laser::new(), &mut lasers)
                 .with(

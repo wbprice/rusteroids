@@ -3,7 +3,11 @@ use amethyst::{
     core::transform::Transform,
     input::{is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
-    renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
+    renderer::{
+        debug_drawing::{DebugLines, DebugLinesComponent, DebugLinesParams},
+        plugins::RenderDebugLines,
+        Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture,
+    },
     window::ScreenDimensions,
 };
 
@@ -28,6 +32,8 @@ impl SimpleState for MyState {
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
         // Do prework for setting up lasers
         world.register::<Laser>();
+        world.insert(DebugLines::new());
+        world.insert(DebugLinesParams { line_width: 2.0 });
 
         // Place the camera
         init_camera(world, &dimensions);

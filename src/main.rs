@@ -3,7 +3,7 @@ use amethyst::{
     input::{InputBundle, StringBindings},
     prelude::*,
     renderer::{
-        plugins::{RenderFlat2D, RenderToWindow},
+        plugins::{RenderDebugLines, RenderFlat2D, RenderToWindow},
         types::DefaultBackend,
         RenderingBundle,
     },
@@ -16,7 +16,9 @@ mod resource;
 mod state;
 mod system;
 
-use crate::system::{Collisions, ControlPlayer, LasersExpire, MoveObjects};
+use crate::system::{
+    Collisions, ControlPlayer, DebugBoxes, LasersDamageAsteroids, LasersExpire, MoveObjects,
+};
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -37,13 +39,16 @@ fn main() -> amethyst::Result<()> {
                     RenderToWindow::from_config_path(display_config)
                         .with_clear([0.34, 0.36, 0.52, 1.0]),
                 )
-                .with_plugin(RenderFlat2D::default()),
+                .with_plugin(RenderFlat2D::default())
+                .with_plugin(RenderDebugLines::default()),
         )?
         .with_bundle(input_bundle)?
         .with(MoveObjects, "move_objects_system", &[])
         .with(ControlPlayer, "control_player_system", &[])
         .with(Collisions, "collisions_system", &[])
-        .with(LasersExpire, "lasers_expire", &[]);
+        .with(LasersExpire, "lasers_expire", &[])
+        .with(LasersDamageAsteroids, "lasers_damage_asteroids", &[])
+        .with(DebugBoxes, "debug_boxes", &[]);
 
     let mut game = Application::new(resources, state::MyState, game_data)?;
     game.run();
