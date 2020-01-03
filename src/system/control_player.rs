@@ -74,7 +74,10 @@ impl<'a> System<'a> for ControlPlayer {
             if let Some(lasers_firing) = lasers_firing {
                 // Is the laser button down?
                 if lasers_firing {
-                    ships_shooting.push(local.clone());
+                    let lasers: Vec<&Laser> = (&lasers).join().collect();
+                    if lasers.len() < 3 {
+                        ships_shooting.push(local.clone());
+                    }
                 }
             }
         }
