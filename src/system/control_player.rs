@@ -10,7 +10,7 @@ use crate::{
     resource::SpriteResource,
 };
 
-const THROTTLE_COEFFICIENT: f32 = 0.75;
+const THROTTLE_COEFFICIENT: f32 = 1.25;
 const YAW_COEFFICIENT: f32 = 0.25;
 const MAX_ANGULAR_VELOCITY: f32 = 3.0;
 
