@@ -5,7 +5,7 @@ authors = ["Blaine Price <1wbprice@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-amethyst = "0.14.0"
+amethyst = "0.15.0"
 log = { version = "0.4.8", features = ["serde"] }
 rand = "0.7.2"
 
@@ -14,4 +14,3 @@ default = ["metal"]
 empty = ["amethyst/empty"]
 metal = ["amethyst/metal"]
 vulkan = ["amethyst/vulkan"]
-nightly = ["amethyst/nightly"]
