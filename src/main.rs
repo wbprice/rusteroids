@@ -18,7 +18,7 @@ mod system;
 
 use crate::system::{
     Collisions, ControlPlayer, DebugBoxes, LasersDamageAsteroids, LasersDamageSmallAsteroids,
-    LasersExpire, MoveObjects,
+    LasersExpire, MoveObjects, ShipCollidesWithAsteroids
 };
 
 fn main() -> amethyst::Result<()> {
@@ -54,6 +54,7 @@ fn main() -> amethyst::Result<()> {
             "lasers_damage_small_asteroids",
             &[],
         )
+        .with(ShipCollidesWithAsteroids, "ships_collide_with_asteroids", &[])
         .with(DebugBoxes, "debug_boxes", &[]);
 
     let mut game = Application::new(resources, state::MyState, game_data)?;
