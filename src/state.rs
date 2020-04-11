@@ -1,12 +1,14 @@
 use amethyst::{
-    assets::{AssetStorage, Loader},
+    assets::{AssetStorage, Handle, Loader},
     core::transform::Transform,
+    ecs::prelude::Entity,
     input::{is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
     renderer::{
         debug_drawing::{DebugLines, DebugLinesParams},
         Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture,
     },
+    ui::{Anchor, FontAsset, TtfFormat, UiText, UiTransform},
     window::ScreenDimensions,
 };
 
@@ -41,6 +43,7 @@ impl SimpleState for MyState {
         let sprites = load_sprites(world);
 
         init_player_ship(world, &sprites, &dimensions);
+        init_lives_remaining(world);
         // Initialize 12 asteroids
         for _ in 0..12 {
             init_asteroid(world, &sprites, &dimensions);
@@ -116,4 +119,51 @@ fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
             sprite_number: i,
         })
         .collect()
+}
+
+pub struct LivesLeft {
+    pub lives: i8,
+}
+
+impl Default for LivesLeft {
+    fn default() -> Self {
+        LivesLeft { lives: 3 }
+    }
+}
+
+pub struct LivesLeftText {
+    pub text: Entity,
+}
+
+fn init_lives_remaining(world: &mut World) {
+    let font: Handle<FontAsset> = world.read_resource::<Loader>().load(
+        "font/square.ttf",
+        TtfFormat,
+        (),
+        &world.read_resource(),
+    );
+
+    let lives_transform = UiTransform::new(
+        "Lives".to_string(),
+        Anchor::TopMiddle,
+        Anchor::TopMiddle,
+        -50.,
+        -50.,
+        1.,
+        200.,
+        50.,
+    );
+
+    let lives_left = world
+        .create_entity()
+        .with(lives_transform)
+        .with(UiText::new(
+            font.clone(),
+            "3".to_string(),
+            [1., 1., 1., 1.],
+            50.,
+        ))
+        .build();
+
+    world.insert(LivesLeftText { text: lives_left });
 }
