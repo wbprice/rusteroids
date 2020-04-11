@@ -3,7 +3,7 @@ use amethyst::{
     ecs::{Entities, Join, ReadStorage, System},
 };
 
-use crate::component::{Asteroid, Player, SmallAsteroid, Collidable};
+use crate::component::{Asteroid, Collidable, Player, SmallAsteroid};
 
 pub struct ShipCollidesWithAsteroids;
 
@@ -14,7 +14,7 @@ impl<'a> System<'a> for ShipCollidesWithAsteroids {
         ReadStorage<'a, Asteroid>,
         ReadStorage<'a, SmallAsteroid>,
         ReadStorage<'a, Transform>,
-        ReadStorage<'a, Collidable>
+        ReadStorage<'a, Collidable>,
     );
 
     fn run(
@@ -22,8 +22,11 @@ impl<'a> System<'a> for ShipCollidesWithAsteroids {
         (entities, players, asteroids, small_asteroids, transforms, collidables): Self::SystemData,
     ) {
         // Check for collisions with big asteroids
-        for (_asteroid, asteroid_local, asteroid_collidable) in (&asteroids, &transforms, &collidables).join() {
-            for (player_entity, _player, player_local, player_collidable) in (&entities, &players, &transforms, &collidables).join()
+        for (_asteroid, asteroid_local, asteroid_collidable) in
+            (&asteroids, &transforms, &collidables).join()
+        {
+            for (player_entity, _player, player_local, player_collidable) in
+                (&entities, &players, &transforms, &collidables).join()
             {
                 let asteroid_x = asteroid_local.translation().x;
                 let asteroid_y = asteroid_local.translation().y;
@@ -41,8 +44,11 @@ impl<'a> System<'a> for ShipCollidesWithAsteroids {
         }
 
         // Check for collisions with small asteroids
-        for (_asteroid, asteroid_local, asteroid_collidable) in (&small_asteroids, &transforms, &collidables).join() {
-            for (player_entity, _player, player_local, player_collidable) in (&entities, &players, &transforms, &collidables).join()
+        for (_asteroid, asteroid_local, asteroid_collidable) in
+            (&small_asteroids, &transforms, &collidables).join()
+        {
+            for (player_entity, _player, player_local, player_collidable) in
+                (&entities, &players, &transforms, &collidables).join()
             {
                 let asteroid_x = asteroid_local.translation().x;
                 let asteroid_y = asteroid_local.translation().y;

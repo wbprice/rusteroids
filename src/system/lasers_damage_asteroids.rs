@@ -1,11 +1,11 @@
 use amethyst::{
     core::transform::Transform,
     ecs::{Entities, Join, ReadExpect, ReadStorage, System, WriteStorage},
-    renderer::{debug_drawing::DebugLinesComponent, palette::Srgba, SpriteRender},
+    renderer::SpriteRender,
 };
 
 use crate::{
-    component::{Asteroid, Laser, SmallAsteroid, Velocity, Collidable},
+    component::{Asteroid, Collidable, Laser, SmallAsteroid, Velocity},
     resource::SpriteResource,
 };
 
@@ -16,13 +16,12 @@ impl<'a> System<'a> for LasersDamageAsteroids {
         Entities<'a>,
         ReadExpect<'a, SpriteResource>,
         WriteStorage<'a, SpriteRender>,
-        WriteStorage<'a, DebugLinesComponent>,
         ReadStorage<'a, Asteroid>,
         WriteStorage<'a, SmallAsteroid>,
         ReadStorage<'a, Laser>,
         WriteStorage<'a, Transform>,
         WriteStorage<'a, Velocity>,
-        WriteStorage<'a, Collidable>
+        WriteStorage<'a, Collidable>,
     );
 
     fn run(
@@ -31,13 +30,12 @@ impl<'a> System<'a> for LasersDamageAsteroids {
             entities,
             sprite_resources,
             mut sprites,
-            mut debug_lines,
             asteroids,
             mut small_asteroids,
             lasers,
             mut transforms,
             mut velocities,
-            mut collidables
+            mut collidables,
         ): Self::SystemData,
     ) {
         let mut new_small_asteroids: Vec<Transform> = vec![];
@@ -45,7 +43,9 @@ impl<'a> System<'a> for LasersDamageAsteroids {
         for (asteroid_entity, _asteroid, asteroid_local, asteroid_collidable) in
             (&entities, &asteroids, &transforms, &collidables).join()
         {
-            for (_laser, laser_local, laser_collidable) in (&lasers, &transforms, &collidables).join() {
+            for (_laser, laser_local, laser_collidable) in
+                (&lasers, &transforms, &collidables).join()
+            {
                 let laser_x = laser_local.translation().x;
                 let laser_y = laser_local.translation().y;
                 let asteroid_x = asteroid_local.translation().x;
@@ -70,17 +70,6 @@ impl<'a> System<'a> for LasersDamageAsteroids {
                 let velocity_x = i.cos() * asteroid_displacement;
                 let velocity_y = i.sin() * asteroid_displacement;
 
-                let pos_x = local.translation().x;
-                let pos_y = local.translation().x;
-
-                let mut debug_component = DebugLinesComponent::new();
-                debug_component.add_circle_2d(
-                    [pos_x, pos_y, 0.0].into(),
-                    6.0,
-                    12,
-                    Srgba::new(0.3, 0.3, 1.0, 1.0),
-                );
-
                 entities
                     .build_entity()
                     .with(
@@ -90,10 +79,9 @@ impl<'a> System<'a> for LasersDamageAsteroids {
                         },
                         &mut sprites,
                     )
-                    .with(debug_component, &mut debug_lines)
                     .with(local, &mut transforms)
                     .with(SmallAsteroid {}, &mut small_asteroids)
-                    .with(Collidable { radius: 6.0 }, &mut collidables)
+                    .with(Collidable { radius: 12.0 }, &mut collidables)
                     .with(
                         Velocity {
                             x: velocity_x,
