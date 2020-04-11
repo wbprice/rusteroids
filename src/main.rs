@@ -18,7 +18,7 @@ mod system;
 
 use crate::system::{
     Collisions, ControlPlayer, DebugBoxes, LasersDamageAsteroids, LasersDamageSmallAsteroids,
-    LasersExpire, MoveObjects,
+    LasersExpire, MoveObjects, ShipCollidesWithAsteroids,
 };
 
 fn main() -> amethyst::Result<()> {
@@ -52,6 +52,11 @@ fn main() -> amethyst::Result<()> {
         .with(
             LasersDamageSmallAsteroids,
             "lasers_damage_small_asteroids",
+            &[],
+        )
+        .with(
+            ShipCollidesWithAsteroids,
+            "ships_collide_with_asteroids",
             &[],
         )
         .with(DebugBoxes, "debug_boxes", &[]);
