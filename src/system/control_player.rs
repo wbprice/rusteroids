@@ -6,7 +6,7 @@ use amethyst::{
 };
 
 use crate::{
-    component::{Laser, Player, Velocity},
+    component::{Laser, Player, Velocity, Collidable},
     resource::SpriteResource,
 };
 
@@ -27,6 +27,7 @@ impl<'a> System<'a> for ControlPlayer {
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, Laser>,
         WriteStorage<'a, DebugLinesComponent>,
+        WriteStorage<'a, Collidable>
     );
 
     fn run(
@@ -41,6 +42,7 @@ impl<'a> System<'a> for ControlPlayer {
             mut velocities,
             mut lasers,
             mut debug_lines,
+            mut collidables,
         ): Self::SystemData,
     ) {
         let throttle = input.axis_value("throttle");
@@ -113,6 +115,7 @@ impl<'a> System<'a> for ControlPlayer {
                 .with(debug_component, &mut debug_lines)
                 .with(transform, &mut transforms)
                 .with(Laser::new(), &mut lasers)
+                .with(Collidable { radius: 3.0}, &mut collidables)
                 .with(
                     Velocity {
                         x: velocity_x,

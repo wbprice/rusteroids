@@ -5,7 +5,7 @@ use amethyst::{
 };
 
 use crate::{
-    component::{Asteroid, Laser, SmallAsteroid, Velocity},
+    component::{Asteroid, Laser, SmallAsteroid, Velocity, Collidable},
     resource::SpriteResource,
 };
 
@@ -25,6 +25,7 @@ impl<'a> System<'a> for LasersDamageAsteroids {
         ReadStorage<'a, Laser>,
         WriteStorage<'a, Transform>,
         WriteStorage<'a, Velocity>,
+        WriteStorage<'a, Collidable>
     );
 
     fn run(
@@ -39,6 +40,7 @@ impl<'a> System<'a> for LasersDamageAsteroids {
             lasers,
             mut transforms,
             mut velocities,
+            mut collidables
         ): Self::SystemData,
     ) {
         let mut new_small_asteroids: Vec<Transform> = vec![];
@@ -94,6 +96,7 @@ impl<'a> System<'a> for LasersDamageAsteroids {
                     .with(debug_component, &mut debug_lines)
                     .with(local, &mut transforms)
                     .with(SmallAsteroid {}, &mut small_asteroids)
+                    .with(Collidable { radius: 6.0 }, &mut collidables)
                     .with(
                         Velocity {
                             x: velocity_x,

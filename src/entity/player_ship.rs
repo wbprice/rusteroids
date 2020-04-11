@@ -5,7 +5,7 @@ use amethyst::{
     window::ScreenDimensions,
 };
 
-use crate::component::{Player, Velocity};
+use crate::component::{Collidable, Player, Velocity};
 
 pub fn init_player_ship(
     world: &mut World,
@@ -33,6 +33,7 @@ pub fn init_player_ship(
         .with(transform)
         .with(debug_component)
         .with(Player {})
+        .with(Collidable { radius: 24.0 })
         .with(Velocity {
             x: 0.,
             y: 0.,

@@ -6,7 +6,7 @@ use amethyst::{
 };
 use rand::prelude::*;
 
-use crate::component::{Asteroid, Velocity};
+use crate::component::{Asteroid, Collidable, Velocity};
 
 const MAX_ASTEROID_VELOCITY: f32 = 5.0;
 const MAX_ASTEROID_ANGULAR_VELOCITY: f32 = 2.0;
@@ -40,6 +40,7 @@ pub fn init_asteroid(world: &mut World, sprites: &[SpriteRender], dimensions: &S
         .with(Asteroid {})
         .with(transform)
         .with(debug_component)
+        .with(Collidable { radius: 36.0 })
         .with(Velocity {
             x: x_velocity,
             y: y_velocity,
