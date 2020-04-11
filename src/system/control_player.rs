@@ -2,11 +2,11 @@ use amethyst::{
     core::transform::Transform,
     ecs::{Entities, Join, Read, ReadExpect, ReadStorage, System, WriteStorage},
     input::{InputHandler, StringBindings},
-    renderer::{debug_drawing::DebugLinesComponent, palette::Srgba, SpriteRender},
+    renderer::SpriteRender,
 };
 
 use crate::{
-    component::{Laser, Player, Velocity},
+    component::{Collidable, Laser, Player, Velocity},
     resource::SpriteResource,
 };
 
@@ -26,7 +26,7 @@ impl<'a> System<'a> for ControlPlayer {
         WriteStorage<'a, Transform>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, Laser>,
-        WriteStorage<'a, DebugLinesComponent>,
+        WriteStorage<'a, Collidable>,
     );
 
     fn run(
@@ -40,7 +40,7 @@ impl<'a> System<'a> for ControlPlayer {
             mut transforms,
             mut velocities,
             mut lasers,
-            mut debug_lines,
+            mut collidables,
         ): Self::SystemData,
     ) {
         let throttle = input.axis_value("throttle");
@@ -90,17 +90,6 @@ impl<'a> System<'a> for ControlPlayer {
             let velocity_x = magnitude.cos() * laser_displacement;
             let velocity_y = magnitude.sin() * laser_displacement;
 
-            let pos_x = transform.translation().x;
-            let pos_y = transform.translation().x;
-
-            let mut debug_component = DebugLinesComponent::new();
-            debug_component.add_circle_2d(
-                [pos_x, pos_y, 0.0].into(),
-                6.0,
-                12,
-                Srgba::new(0.3, 0.3, 1.0, 1.0),
-            );
-
             entities
                 .build_entity()
                 .with(
@@ -110,9 +99,9 @@ impl<'a> System<'a> for ControlPlayer {
                     },
                     &mut sprites,
                 )
-                .with(debug_component, &mut debug_lines)
                 .with(transform, &mut transforms)
                 .with(Laser::new(), &mut lasers)
+                .with(Collidable { radius: 3.0 }, &mut collidables)
                 .with(
                     Velocity {
                         x: velocity_x,

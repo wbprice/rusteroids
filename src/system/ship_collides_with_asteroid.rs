@@ -3,11 +3,8 @@ use amethyst::{
     ecs::{Entities, Join, ReadStorage, System},
 };
 
-use crate::component::{Asteroid, Player, SmallAsteroid};
+use crate::component::{Asteroid, Collidable, Player, SmallAsteroid};
 
-const PLAYER_RADIUS: f32 = 24.0;
-const ASTEROID_RADIUS: f32 = 36.0;
-const SMALL_ASTEROID_RADIUS: f32 = 6.0;
 pub struct ShipCollidesWithAsteroids;
 
 impl<'a> System<'a> for ShipCollidesWithAsteroids {
@@ -17,15 +14,19 @@ impl<'a> System<'a> for ShipCollidesWithAsteroids {
         ReadStorage<'a, Asteroid>,
         ReadStorage<'a, SmallAsteroid>,
         ReadStorage<'a, Transform>,
+        ReadStorage<'a, Collidable>,
     );
 
     fn run(
         &mut self,
-        (entities, players, asteroids, small_asteroids, transforms): Self::SystemData,
+        (entities, players, asteroids, small_asteroids, transforms, collidables): Self::SystemData,
     ) {
         // Check for collisions with big asteroids
-        for (_asteroid, asteroid_local) in (&asteroids, &transforms).join() {
-            for (player_entity, _player, player_local) in (&entities, &players, &transforms).join()
+        for (_asteroid, asteroid_local, asteroid_collidable) in
+            (&asteroids, &transforms, &collidables).join()
+        {
+            for (player_entity, _player, player_local, player_collidable) in
+                (&entities, &players, &transforms, &collidables).join()
             {
                 let asteroid_x = asteroid_local.translation().x;
                 let asteroid_y = asteroid_local.translation().y;
@@ -36,15 +37,18 @@ impl<'a> System<'a> for ShipCollidesWithAsteroids {
                 let dy = asteroid_y - player_y;
                 let distance = (dx.powi(2) + dy.powi(2)).sqrt();
 
-                if distance < PLAYER_RADIUS + ASTEROID_RADIUS {
+                if distance < player_collidable.radius + asteroid_collidable.radius {
                     entities.delete(player_entity).unwrap();
                 }
             }
         }
 
         // Check for collisions with small asteroids
-        for (_asteroid, asteroid_local) in (&small_asteroids, &transforms).join() {
-            for (player_entity, _player, player_local) in (&entities, &players, &transforms).join()
+        for (_asteroid, asteroid_local, asteroid_collidable) in
+            (&small_asteroids, &transforms, &collidables).join()
+        {
+            for (player_entity, _player, player_local, player_collidable) in
+                (&entities, &players, &transforms, &collidables).join()
             {
                 let asteroid_x = asteroid_local.translation().x;
                 let asteroid_y = asteroid_local.translation().y;
@@ -55,7 +59,7 @@ impl<'a> System<'a> for ShipCollidesWithAsteroids {
                 let dy = asteroid_y - player_y;
                 let distance = (dx.powi(2) + dy.powi(2)).sqrt();
 
-                if distance < PLAYER_RADIUS + SMALL_ASTEROID_RADIUS {
+                if distance < player_collidable.radius + asteroid_collidable.radius {
                     entities.delete(player_entity).unwrap();
                 }
             }
