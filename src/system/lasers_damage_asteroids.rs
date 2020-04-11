@@ -11,9 +11,6 @@ use crate::{
 
 pub struct LasersDamageAsteroids;
 
-const LASER_RADIUS: f32 = 3.0;
-const ASTEROID_RADIUS: f32 = 36.0;
-
 impl<'a> System<'a> for LasersDamageAsteroids {
     type SystemData = (
         Entities<'a>,
@@ -45,10 +42,10 @@ impl<'a> System<'a> for LasersDamageAsteroids {
     ) {
         let mut new_small_asteroids: Vec<Transform> = vec![];
 
-        for (asteroid_entity, _asteroid, asteroid_local) in
-            (&entities, &asteroids, &transforms).join()
+        for (asteroid_entity, _asteroid, asteroid_local, asteroid_collidable) in
+            (&entities, &asteroids, &transforms, &collidables).join()
         {
-            for (_laser, laser_local) in (&lasers, &transforms).join() {
+            for (_laser, laser_local, laser_collidable) in (&lasers, &transforms, &collidables).join() {
                 let laser_x = laser_local.translation().x;
                 let laser_y = laser_local.translation().y;
                 let asteroid_x = asteroid_local.translation().x;
@@ -58,7 +55,7 @@ impl<'a> System<'a> for LasersDamageAsteroids {
                 let dy = asteroid_y - laser_y;
                 let distance = (dx.powi(2) + dy.powi(2)).sqrt();
 
-                if distance < LASER_RADIUS + ASTEROID_RADIUS {
+                if distance < laser_collidable.radius + asteroid_collidable.radius {
                     entities.delete(asteroid_entity).unwrap();
                     new_small_asteroids.push(asteroid_local.clone());
                 }
