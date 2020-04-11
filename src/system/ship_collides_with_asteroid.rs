@@ -1,9 +1,13 @@
 use amethyst::{
     core::transform::Transform,
-    ecs::{Entities, Join, ReadStorage, System},
+    ecs::{Entities, Join, ReadExpect, ReadStorage, System, Write, WriteStorage},
+    ui::UiText,
 };
 
-use crate::component::{Asteroid, Collidable, Player, SmallAsteroid};
+use crate::{
+    component::{Asteroid, Collidable, Player, SmallAsteroid},
+    state::{LivesLeft, LivesLeftText},
+};
 
 pub struct ShipCollidesWithAsteroids;
 
@@ -15,11 +19,24 @@ impl<'a> System<'a> for ShipCollidesWithAsteroids {
         ReadStorage<'a, SmallAsteroid>,
         ReadStorage<'a, Transform>,
         ReadStorage<'a, Collidable>,
+        WriteStorage<'a, UiText>,
+        Write<'a, LivesLeft>,
+        ReadExpect<'a, LivesLeftText>,
     );
 
     fn run(
         &mut self,
-        (entities, players, asteroids, small_asteroids, transforms, collidables): Self::SystemData,
+        (
+            entities,
+            players,
+            asteroids,
+            small_asteroids,
+            transforms,
+            collidables,
+            mut ui_text,
+            mut lives_left,
+            lives_left_text,
+        ): Self::SystemData,
     ) {
         // Check for collisions with big asteroids
         for (_asteroid, asteroid_local, asteroid_collidable) in
@@ -38,6 +55,11 @@ impl<'a> System<'a> for ShipCollidesWithAsteroids {
                 let distance = (dx.powi(2) + dy.powi(2)).sqrt();
 
                 if distance < player_collidable.radius + asteroid_collidable.radius {
+                    lives_left.lives = lives_left.lives - 1;
+                    if let Some(text) = ui_text.get_mut(lives_left_text.text) {
+                        text.text = lives_left.lives.to_string();
+                    }
+
                     entities.delete(player_entity).unwrap();
                 }
             }

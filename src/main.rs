@@ -7,6 +7,7 @@ use amethyst::{
         types::DefaultBackend,
         RenderingBundle,
     },
+    ui::{RenderUi, UiBundle},
     utils::application_root_dir,
 };
 
@@ -41,9 +42,11 @@ fn main() -> amethyst::Result<()> {
                         .with_clear([0.34, 0.36, 0.52, 1.0]),
                 )
                 .with_plugin(RenderFlat2D::default())
-                .with_plugin(RenderDebugLines::default()),
+                .with_plugin(RenderDebugLines::default())
+                .with_plugin(RenderUi::default()),
         )?
         .with_bundle(input_bundle)?
+        .with_bundle(UiBundle::<StringBindings>::new())?
         .with(MoveObjects, "move_objects_system", &[])
         .with(ControlPlayer, "control_player_system", &[])
         .with(Collisions, "collisions_system", &[])
