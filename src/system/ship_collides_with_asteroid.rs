@@ -82,6 +82,11 @@ impl<'a> System<'a> for ShipCollidesWithAsteroids {
                 let distance = (dx.powi(2) + dy.powi(2)).sqrt();
 
                 if distance < player_collidable.radius + asteroid_collidable.radius {
+                    lives_left.lives = lives_left.lives - 1;
+                    if let Some(text) = ui_text.get_mut(lives_left_text.text) {
+                        text.text = format!("{} LIVES", lives_left.lives);
+                    }
+
                     entities.delete(player_entity).unwrap();
                 }
             }
