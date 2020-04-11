@@ -145,8 +145,8 @@ fn init_lives_remaining(world: &mut World) {
 
     let lives_transform = UiTransform::new(
         "Lives".to_string(),
-        Anchor::TopMiddle,
-        Anchor::TopMiddle,
+        Anchor::TopRight,
+        Anchor::TopRight,
         -50.,
         -50.,
         1.,
@@ -159,7 +159,7 @@ fn init_lives_remaining(world: &mut World) {
         .with(lives_transform)
         .with(UiText::new(
             font.clone(),
-            "3".to_string(),
+            "3 LIVES".to_string(),
             [1., 1., 1., 1.],
             50.,
         ))
