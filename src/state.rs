@@ -105,7 +105,7 @@ impl SimpleState for MyState {
         let mut game = data.world.write_resource::<GameState>();
 
         if let Some(UserAction::EndGame) = game.user_action.take() {
-            return Trans::Switch(Box::new(EndState));
+            return Trans::Push(Box::new(EndState));
         }
 
         Trans::None
