@@ -12,6 +12,7 @@ use amethyst::{
 };
 
 mod component;
+mod end_state;
 mod entity;
 mod resource;
 mod state;
@@ -65,7 +66,7 @@ fn main() -> amethyst::Result<()> {
         )
         .with(DebugBoxes, "debug_boxes", &[]);
 
-    let mut game = Application::new(resources, state::MyState, game_data)?;
+    let mut game = Application::new(resources, end_state::EndState, game_data)?;
     game.run();
 
     Ok(())

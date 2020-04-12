@@ -67,7 +67,7 @@ impl SimpleState for MyState {
     }
 }
 
-fn init_camera(world: &mut World, dimensions: &ScreenDimensions) {
+pub fn init_camera(world: &mut World, dimensions: &ScreenDimensions) {
     // Center the camera in the middle of the screen, and let it cover
     // the entire screen
     let mut transform = Transform::default();
