@@ -8,7 +8,9 @@ use crate::state::MyState;
 pub struct EndState;
 
 impl SimpleState for EndState {
-    fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {}
+    fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
+        dbg!("new state!");
+    }
 
     fn handle_event(
         &mut self,

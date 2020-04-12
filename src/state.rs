@@ -14,9 +14,43 @@ use amethyst::{
 
 use crate::{
     component::Laser,
+    end_state::EndState,
     entity::{init_asteroid, init_player_ship},
     resource::SpriteResource,
 };
+
+// Rough State Transition Stuff, Doesn't Have To Live Here Forever
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CurrentState {
+    Gameplay,
+    GameOver,
+}
+
+impl Default for CurrentState {
+    fn default() -> Self {
+        CurrentState::Gameplay
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum UserAction {
+    Restart,
+    EndGame,
+}
+
+pub struct GameState {
+    pub user_action: Option<UserAction>,
+    current_state: CurrentState,
+}
+
+impl Default for GameState {
+    fn default() -> Self {
+        GameState {
+            user_action: None,
+            current_state: CurrentState::default(),
+        }
+    }
+}
 
 pub struct MyState;
 
@@ -33,6 +67,7 @@ impl SimpleState for MyState {
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
         // Do prework for setting up lasers
         world.register::<Laser>();
+        world.insert(GameState::default());
         world.insert(DebugLines::new());
         world.insert(DebugLinesParams { line_width: 2.0 });
 
@@ -63,6 +98,16 @@ impl SimpleState for MyState {
         }
 
         // Keep going
+        Trans::None
+    }
+
+    fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
+        let mut game = data.world.write_resource::<GameState>();
+
+        if let Some(UserAction::EndGame) = game.user_action.take() {
+            return Trans::Switch(Box::new(EndState));
+        }
+
         Trans::None
     }
 }
