@@ -1,17 +1,14 @@
 use amethyst::{
     input::{is_key_down, VirtualKeyCode},
     prelude::*,
-    window::ScreenDimensions,
 };
 
-use crate::state::{init_camera, MyState};
+use crate::state::MyState;
 
 pub struct EndState;
 
 impl SimpleState for EndState {
-    fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
-        let world = data.world;
-    }
+    fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {}
 
     fn handle_event(
         &mut self,

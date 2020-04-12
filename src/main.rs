@@ -66,7 +66,7 @@ fn main() -> amethyst::Result<()> {
         )
         .with(DebugBoxes, "debug_boxes", &[]);
 
-    let mut game = Application::new(resources, end_state::EndState, game_data)?;
+    let mut game = Application::new(resources, state::MyState, game_data)?;
     game.run();
 
     Ok(())
