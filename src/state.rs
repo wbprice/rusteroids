@@ -131,6 +131,18 @@ impl Default for LivesLeft {
     }
 }
 
+pub struct RespawnTimer {
+    pub time_remaining: f32,
+}
+
+impl Default for RespawnTimer {
+    fn default() -> Self {
+        RespawnTimer {
+            time_remaining: 3.0,
+        }
+    }
+}
+
 pub struct LivesLeftText {
     pub text: Entity,
 }
