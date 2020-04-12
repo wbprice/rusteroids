@@ -6,8 +6,6 @@ use amethyst::{
     ui::{Anchor, FontAsset, TtfFormat, UiText, UiTransform},
 };
 
-use crate::state::MyState;
-
 pub struct EndState;
 
 impl SimpleState for EndState {
@@ -23,7 +21,7 @@ impl SimpleState for EndState {
     ) -> SimpleTrans {
         if let StateEvent::Window(event) = &event {
             if is_key_down(&event, VirtualKeyCode::R) {
-                return Trans::Pop; 
+                return Trans::Pop;
             }
         }
 

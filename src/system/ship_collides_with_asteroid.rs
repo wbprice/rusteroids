@@ -6,7 +6,7 @@ use amethyst::{
 
 use crate::{
     component::{Asteroid, Collidable, Player, SmallAsteroid},
-    state::{LivesLeft, LivesLeftText}
+    state::{LivesLeft, LivesLeftText},
 };
 
 pub struct ShipCollidesWithAsteroids;

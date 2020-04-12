@@ -8,7 +8,7 @@ use amethyst::{
 use crate::{
     component::{Collidable, Player, Velocity},
     resource::SpriteResource,
-    state::{LivesLeft, RespawnTimer, UserAction, GameState},
+    state::{GameState, LivesLeft, RespawnTimer, UserAction},
 };
 
 pub struct ShipRespawns;
@@ -26,7 +26,7 @@ impl<'a> System<'a> for ShipRespawns {
         Write<'a, RespawnTimer>,
         Read<'a, Time>,
         Read<'a, LivesLeft>,
-        Write<'a, GameState>
+        Write<'a, GameState>,
     );
 
     fn run(
@@ -43,7 +43,7 @@ impl<'a> System<'a> for ShipRespawns {
             mut respawn_timer,
             time,
             lives_left,
-            mut game_state
+            mut game_state,
         ): Self::SystemData,
     ) {
         let player_count = (&entities, &players).join().count();
