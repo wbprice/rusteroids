@@ -12,10 +12,11 @@ use amethyst::{
 };
 
 mod component;
+mod state;
+mod title_state;
 mod end_state;
 mod entity;
 mod resource;
-mod state;
 mod system;
 
 use crate::system::{
@@ -49,24 +50,24 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(input_bundle)?
         .with_bundle(UiBundle::<StringBindings>::new())?
         .with(MoveObjects, "move_objects_system", &[])
-        .with(ControlPlayer, "control_player_system", &[])
-        .with(Collisions, "collisions_system", &[])
-        .with(LasersExpire, "lasers_expire", &[])
-        .with(LasersDamageAsteroids, "lasers_damage_asteroids", &[])
-        .with(ShipRespawns, "ship_respawns", &[])
-        .with(
-            LasersDamageSmallAsteroids,
-            "lasers_damage_small_asteroids",
-            &[],
-        )
-        .with(
-            ShipCollidesWithAsteroids,
-            "ships_collide_with_asteroids",
-            &[],
-        )
-        .with(DebugBoxes, "debug_boxes", &[]);
+        .with(DebugBoxes, "debug_boxes", &[])
+        // .with(ControlPlayer, "control_player_system", &[])
+        // .with(Collisions, "collisions_system", &[])
+        // .with(LasersExpire, "lasers_expire", &[])
+        .with(LasersDamageAsteroids, "lasers_damage_asteroids", &[]);
+        // .with(ShipRespawns, "ship_respawns", &[])
+        // .with(
+        //     LasersDamageSmallAsteroids,
+        //     "lasers_damage_small_asteroids",
+        //     &[],
+        // )
+        // .with(
+        //     ShipCollidesWithAsteroids,
+        //     "ships_collide_with_asteroids",
+        //     &[],
+        // )
 
-    let mut game = Application::new(resources, state::MyState, game_data)?;
+    let mut game = Application::new(resources, title_state::TitleState, game_data)?;
     game.run();
 
     Ok(())

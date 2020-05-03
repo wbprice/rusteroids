@@ -22,18 +22,20 @@ use crate::{
 // Rough State Transition Stuff, Doesn't Have To Live Here Forever
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum CurrentState {
+    Title,
     Gameplay,
     GameOver,
 }
 
 impl Default for CurrentState {
     fn default() -> Self {
-        CurrentState::Gameplay
+        CurrentState::Title
     }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum UserAction {
+    Start,
     Restart,
     EndGame,
 }
@@ -74,15 +76,12 @@ impl SimpleState for MyState {
         // Place the camera
         init_camera(world, &dimensions);
 
-        // Load our sprites and display them
-        let sprites = load_sprites(world);
-
-        init_player_ship(world, &sprites, &dimensions);
-        init_lives_remaining(world);
-        // Initialize 12 asteroids
-        for _ in 0..12 {
-            init_asteroid(world, &sprites, &dimensions);
-        }
+        // init_player_ship(world, &sprites, &dimensions);
+        // init_lives_remaining(world);
+        // // Initialize 12 asteroids
+        // for _ in 0..12 {
+        //     init_asteroid(world, &sprites, &dimensions);
+        // }
     }
 
     fn handle_event(
@@ -123,47 +122,6 @@ pub fn init_camera(world: &mut World, dimensions: &ScreenDimensions) {
         .with(Camera::standard_2d(dimensions.width(), dimensions.height()))
         .with(transform)
         .build();
-}
-
-fn load_sprites(world: &mut World) -> Vec<SpriteRender> {
-    // Load the texture for our sprites. We'll later need to
-    // add a handle to this texture to our `SpriteRender`s, so
-    // we need to keep a reference to it.
-    let texture_handle = {
-        let loader = world.read_resource::<Loader>();
-        let texture_storage = world.read_resource::<AssetStorage<Texture>>();
-        loader.load(
-            "sprites/spritesheet.png",
-            ImageFormat::default(),
-            (),
-            &texture_storage,
-        )
-    };
-
-    // Load the spritesheet definition file, which contains metadata on our
-    // spritesheet texture.
-    let sheet_handle = {
-        let loader = world.read_resource::<Loader>();
-        let sheet_storage = world.read_resource::<AssetStorage<SpriteSheet>>();
-        loader.load(
-            "sprites/spritesheet.ron",
-            SpriteSheetFormat(texture_handle),
-            (),
-            &sheet_storage,
-        )
-    };
-
-    // Mutate the world with a sheet handle
-    world.insert(SpriteResource {
-        sprite_sheet: sheet_handle.clone(),
-    });
-
-    (0..2)
-        .map(|i| SpriteRender {
-            sprite_sheet: sheet_handle.clone(),
-            sprite_number: i,
-        })
-        .collect()
 }
 
 pub struct LivesLeft {

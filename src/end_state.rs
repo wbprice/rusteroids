@@ -24,7 +24,6 @@ impl SimpleState for EndState {
             if is_key_down(&event, VirtualKeyCode::R) {
                 let mut game_over_text = world.try_fetch::<GameOverText>();
                 if let Some(text) = game_over_text {
-                    *text.text = None;
                 }
                 return Trans::Pop;
             }
