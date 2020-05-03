@@ -16,11 +16,16 @@ impl SimpleState for EndState {
 
     fn handle_event(
         &mut self,
-        mut _data: StateData<'_, GameData<'_, '_>>,
+        mut data: StateData<'_, GameData<'_, '_>>,
         event: StateEvent,
     ) -> SimpleTrans {
+        let world = data.world;
         if let StateEvent::Window(event) = &event {
             if is_key_down(&event, VirtualKeyCode::R) {
+                let mut game_over_text = world.try_fetch::<GameOverText>();
+                if let Some(text) = game_over_text {
+                    *text.text = None;
+                }
                 return Trans::Pop;
             }
         }
@@ -30,7 +35,7 @@ impl SimpleState for EndState {
 }
 
 struct GameOverText {
-    pub text: Entity,
+    pub text: Option<Entity>,
 }
 
 fn init_game_over_text(world: &mut World) {
@@ -63,5 +68,5 @@ fn init_game_over_text(world: &mut World) {
         ))
         .build();
 
-    world.insert(GameOverText { text: lives_left });
+    world.insert(GameOverText { text: Some(lives_left) });
 }
