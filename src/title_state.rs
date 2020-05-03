@@ -23,6 +23,7 @@ impl SimpleState for TitleState {
         load_sprites(world);
         init_camera(world, &dimensions);
         init_title(world);
+        init_instruction(world);
 
         let sprites = load_sprites(world);
 
@@ -71,6 +72,41 @@ fn init_title(world: &mut World) {
             "RUSTEROIDS".to_string(),
             [1., 1., 1., 1.],
             100.,
+        ))
+        .build();
+
+    world.insert(Label {
+        entity: label_entity,
+    });
+}
+
+fn init_instruction(world: &mut World) {
+    let font: Handle<FontAsset> = world.read_resource::<Loader>().load(
+        "font/square.ttf",
+        TtfFormat,
+        (),
+        &world.read_resource(),
+    );
+
+    let label_transform = UiTransform::new(
+        "title".to_string(),
+        Anchor::Middle,
+        Anchor::Middle,
+        0.,
+        -70.,
+        1.,
+        550.,
+        100.,
+    );
+
+    let label_entity = world
+        .create_entity()
+        .with(label_transform)
+        .with(UiText::new(
+            font.clone(),
+            "PRESS SPACEBAR".to_string(),
+            [1., 1., 1., 1.],
+            36.,
         ))
         .build();
 
