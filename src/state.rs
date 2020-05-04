@@ -150,10 +150,14 @@ impl<'a, 'b> SimpleState for MyState<'a, 'b> {
     }
 
     fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
-        let mut game = data.world.write_resource::<GameState>();
+        // let mut game = data.world.write_resource::<GameState>();
 
-        if let Some(UserAction::EndGame) = game.user_action.take() {
-            return Trans::Push(Box::new(EndState));
+        // if let Some(UserAction::EndGame) = game.user_action.take() {
+        //     return Trans::Push(Box::new(EndState));
+        // }
+
+        if let Some(dispatcher) = self.dispatcher.as_mut() {
+            dispatcher.dispatch(&data.world);
         }
 
         Trans::None
