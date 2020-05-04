@@ -1,7 +1,10 @@
 use amethyst::{
     assets::{AssetStorage, Handle, Loader},
     core::transform::Transform,
-    ecs::prelude::Entity,
+    ecs::prelude::{
+        Entity,
+        DispatcherBuilder
+    },
     prelude::*,
     renderer::{
         debug_drawing::{DebugLines, DebugLinesParams},
@@ -13,13 +16,16 @@ use amethyst::{
     utils::removal::{
         Removal,
         exec_removal
-    }
+    },
 };
 
 use crate::{
     state::{
         MyState,
         RemovalId
+    },
+    system::{
+        MoveObjects
     },
     entity::init_asteroid, 
     resource::SpriteResource,
@@ -31,6 +37,9 @@ impl SimpleState for TitleState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
+
+        let mut dispatcher_builder = DispatcherBuilder::new();
+        dispatcher_builder.add(MoveObjects,"move_objects_system", &[]);
 
         world.insert(DebugLines::new());
         world.insert(DebugLinesParams { line_width: 2.0 });

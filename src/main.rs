@@ -56,11 +56,11 @@ fn main() -> amethyst::Result<()> {
         .with(LasersExpire, "lasers_expire", &[])
         .with(LasersDamageAsteroids, "lasers_damage_asteroids", &[])
         // .with(ShipRespawns, "ship_respawns", &[])
-        .with(
-            LasersDamageSmallAsteroids,
-            "lasers_damage_small_asteroids",
-            &[],
-        );
+        // .with(
+        //     LasersDamageSmallAsteroids,
+        //     "lasers_damage_small_asteroids",
+        //     &[],
+        // );
         // .with(
         //     ShipCollidesWithAsteroids,
         //     "ships_collide_with_asteroids",
