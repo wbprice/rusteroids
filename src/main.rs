@@ -51,21 +51,21 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(UiBundle::<StringBindings>::new())?
         .with(MoveObjects, "move_objects_system", &[])
         .with(DebugBoxes, "debug_boxes", &[])
-        // .with(ControlPlayer, "control_player_system", &[])
-        // .with(Collisions, "collisions_system", &[])
-        // .with(LasersExpire, "lasers_expire", &[])
-        .with(LasersDamageAsteroids, "lasers_damage_asteroids", &[]);
+        .with(ControlPlayer, "control_player_system", &[])
+        .with(Collisions, "collisions_system", &[])
+        .with(LasersExpire, "lasers_expire", &[])
+        .with(LasersDamageAsteroids, "lasers_damage_asteroids", &[])
         // .with(ShipRespawns, "ship_respawns", &[])
-        // .with(
-        //     LasersDamageSmallAsteroids,
-        //     "lasers_damage_small_asteroids",
-        //     &[],
-        // )
+        .with(
+            LasersDamageSmallAsteroids,
+            "lasers_damage_small_asteroids",
+            &[],
+        );
         // .with(
         //     ShipCollidesWithAsteroids,
         //     "ships_collide_with_asteroids",
         //     &[],
-        // )
+        // );
 
     let mut game = Application::new(resources, title_state::TitleState, game_data)?;
     game.run();

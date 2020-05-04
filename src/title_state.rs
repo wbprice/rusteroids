@@ -1,19 +1,29 @@
 use amethyst::{
     assets::{AssetStorage, Handle, Loader},
-    core::math::geometry::Point2,
     core::transform::Transform,
     ecs::prelude::Entity,
     prelude::*,
     renderer::{
-        debug_drawing::{DebugLines, DebugLinesComponent, DebugLinesParams},
-        palette::Srgba,
+        debug_drawing::{DebugLines, DebugLinesParams},
         Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture,
     },
     ui::{Anchor, FontAsset, TtfFormat, UiText, UiTransform},
     window::ScreenDimensions,
+    input::{VirtualKeyCode, is_key_down},
+    utils::removal::{
+        Removal,
+        exec_removal
+    }
 };
 
-use crate::{entity::init_asteroid, resource::SpriteResource};
+use crate::{
+    state::{
+        MyState,
+        RemovalId
+    },
+    entity::init_asteroid, 
+    resource::SpriteResource,
+};
 
 pub struct TitleState;
 
@@ -24,6 +34,7 @@ impl SimpleState for TitleState {
 
         world.insert(DebugLines::new());
         world.insert(DebugLinesParams { line_width: 2.0 });
+        world.register::<Removal<RemovalId>>();
 
         load_sprites(world);
         init_camera(world, &dimensions);
@@ -39,9 +50,20 @@ impl SimpleState for TitleState {
 
     fn handle_event(
         &mut self,
-        _data: StateData<'_, GameData<'_, '_>>,
+        data: StateData<'_, GameData<'_, '_>>,
         event: StateEvent,
     ) -> SimpleTrans {
+        if let StateEvent::Window(event) = &event {
+            if is_key_down(&event, VirtualKeyCode::Space) {
+                let world = data.world;
+                // Clean up text from this page
+                exec_removal(&world.entities(), &world.read_storage(), RemovalId::TitleText);
+                world.maintain();
+
+                return Trans::Switch(Box::new(MyState));
+            }
+        }
+
         Trans::None
     }
 }
@@ -78,6 +100,7 @@ fn init_title(world: &mut World) {
             [1., 1., 1., 1.],
             100.,
         ))
+        .with(Removal::new(RemovalId::TitleText))
         .build();
 
     world.insert(Label {
@@ -113,6 +136,7 @@ fn init_instruction(world: &mut World) {
             [1., 1., 1., 1.],
             36.,
         ))
+        .with(Removal::new(RemovalId::TitleText))
         .build();
 
     world.insert(Label {

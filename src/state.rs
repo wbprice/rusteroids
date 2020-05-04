@@ -17,7 +17,13 @@ use crate::{
     end_state::EndState,
     entity::{init_asteroid, init_player_ship},
     resource::SpriteResource,
+    title_state::load_sprites
 };
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum RemovalId {
+    TitleText
+}
 
 // Rough State Transition Stuff, Doesn't Have To Live Here Forever
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -73,15 +79,10 @@ impl SimpleState for MyState {
         world.insert(DebugLines::new());
         world.insert(DebugLinesParams { line_width: 2.0 });
 
-        // Place the camera
-        init_camera(world, &dimensions);
+        let sprites = load_sprites(world);
 
-        // init_player_ship(world, &sprites, &dimensions);
-        // init_lives_remaining(world);
-        // // Initialize 12 asteroids
-        // for _ in 0..12 {
-        //     init_asteroid(world, &sprites, &dimensions);
-        // }
+        init_lives_remaining(world);
+        init_player_ship(world, &sprites, &dimensions);
     }
 
     fn handle_event(
