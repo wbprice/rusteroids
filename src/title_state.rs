@@ -88,9 +88,15 @@ fn init_title(world: &mut World) {
         Srgba::new(0.3, 0.3, 1.0, 1.0),
     );
 
+    let rectangle_entity = world
+        .create_entity()
+        .with(debug_component)
+        .build();
+
     world.insert(Label {
         entity: label_entity,
     });
+    world.insert(rectangle_entity);
 }
 
 fn init_instruction(world: &mut World) {
