@@ -1,7 +1,14 @@
 use amethyst::{
     assets::{AssetStorage, Handle, Loader},
-    core::transform::Transform,
-    ecs::prelude::Entity,
+    core::{
+        transform::Transform,
+        ArcThreadPool
+    },
+    ecs::prelude::{
+        Entity,
+        DispatcherBuilder,
+        Dispatcher
+    },
     input::{is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
     renderer::{
@@ -17,7 +24,18 @@ use crate::{
     end_state::EndState,
     entity::{init_asteroid, init_player_ship},
     resource::SpriteResource,
-    title_state::load_sprites
+    title_state::load_sprites,
+    system::{
+        MoveObjects,
+        DebugBoxes,
+        ControlPlayer,
+        Collisions,
+        LasersExpire,
+        LasersDamageAsteroids,
+        ShipRespawns,
+        LasersDamageSmallAsteroids,
+        ShipCollidesWithAsteroids
+    }
 };
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -60,9 +78,12 @@ impl Default for GameState {
     }
 }
 
-pub struct MyState;
+#[derive(Default)]
+pub struct MyState<'a, 'b> {
+    dispatcher: Option<Dispatcher<'a, 'b>>
+}
 
-impl SimpleState for MyState {
+impl<'a, 'b> SimpleState for MyState<'a, 'b> {
     // On start will run when this state is initialized. For more
     // state lifecycle hooks, see:
     // https://book.amethyst.rs/stable/concepts/state.html#life-cycle
@@ -73,6 +94,33 @@ impl SimpleState for MyState {
         // place our sprites correctly later. We'll clone this since we'll
         // pass the world mutably to the following functions.
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
+        let mut dispatcher_builder = DispatcherBuilder::new();
+        dispatcher_builder.add(MoveObjects, "move_objects_system", &[]);
+        dispatcher_builder.add(DebugBoxes, "debug_boxes", &[]);
+        dispatcher_builder.add(ControlPlayer, "control_player_system", &[]);
+        dispatcher_builder.add(Collisions, "collisions_system", &[]);
+        dispatcher_builder.add(LasersExpire, "lasers_expire", &[]);
+        dispatcher_builder.add(LasersDamageAsteroids, "lasers_damage_asteroids", &[]);
+        dispatcher_builder.add(ShipRespawns, "ship_respawns", &[]);
+        dispatcher_builder.add(
+            LasersDamageSmallAsteroids,
+            "lasers_damage_small_asteroids",
+            &[],
+        );
+        dispatcher_builder.add(
+            ShipCollidesWithAsteroids,
+            "ships_collide_with_asteroids",
+            &[],
+        );
+
+        // Setup dispatcher
+        let mut dispatcher = dispatcher_builder
+            .with_pool((*world.read_resource::<ArcThreadPool>()).clone())
+            .build();
+        dispatcher.setup(world);
+
+        self.dispatcher = Some(dispatcher);
+
         // Do prework for setting up lasers
         world.register::<Laser>();
         world.insert(GameState::default());

@@ -1,14 +1,19 @@
 use amethyst::{
     assets::{AssetStorage, Handle, Loader},
-    core::transform::Transform,
+    core::{
+        transform::Transform,
+        ArcThreadPool
+    },
     ecs::prelude::{
         Entity,
-        DispatcherBuilder
+        DispatcherBuilder,
+        Dispatcher
     },
     prelude::*,
     renderer::{
         debug_drawing::{DebugLines, DebugLinesParams},
         Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture,
+
     },
     ui::{Anchor, FontAsset, TtfFormat, UiText, UiTransform},
     window::ScreenDimensions,
@@ -16,7 +21,7 @@ use amethyst::{
     utils::removal::{
         Removal,
         exec_removal
-    },
+    }
 };
 
 use crate::{
@@ -25,21 +30,34 @@ use crate::{
         RemovalId
     },
     system::{
-        MoveObjects
+        MoveObjects,
+        DebugBoxes,
+        LasersDamageAsteroids
     },
     entity::init_asteroid, 
     resource::SpriteResource,
 };
 
-pub struct TitleState;
+#[derive(Default)]
+pub struct TitleState<'a, 'b> {
+    dispatcher: Option<Dispatcher<'a, 'b>>
+}
 
-impl SimpleState for TitleState {
-    fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
-        let world = data.world;
+impl<'a, 'b> SimpleState for TitleState<'a, 'b> {
+    fn on_start(&mut self, mut data: StateData<'_, GameData<'_, '_>>) {
+        let world = &mut data.world;
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
 
         let mut dispatcher_builder = DispatcherBuilder::new();
-        dispatcher_builder.add(MoveObjects,"move_objects_system", &[]);
+        dispatcher_builder.add(MoveObjects,"move_objects", &[]);
+        dispatcher_builder.add(DebugBoxes,"debug_boxes", &[]);
+        dispatcher_builder.add(LasersDamageAsteroids,"lasers_damage_asteroids", &[]);
+
+        // Setup dispatcher
+        let mut dispatcher = dispatcher_builder
+            .with_pool((*world.read_resource::<ArcThreadPool>()).clone())
+            .build();
+        dispatcher.setup(world);
 
         world.insert(DebugLines::new());
         world.insert(DebugLinesParams { line_width: 2.0 });
@@ -55,6 +73,8 @@ impl SimpleState for TitleState {
         for _ in 0..64 {
             init_asteroid(world, &sprites, &dimensions)
         }
+
+        self.dispatcher = Some(dispatcher);
     }
 
     fn handle_event(
@@ -69,8 +89,19 @@ impl SimpleState for TitleState {
                 exec_removal(&world.entities(), &world.read_storage(), RemovalId::TitleText);
                 world.maintain();
 
-                return Trans::Switch(Box::new(MyState));
+                return Trans::Switch(Box::new(MyState::default()));
             }
+        }
+
+        Trans::None
+    }
+
+    fn update(
+        &mut self,
+        data: &mut StateData<'_, GameData<'_, '_>>
+    ) -> SimpleTrans {
+        if let Some(dispatcher) = self.dispatcher.as_mut() {
+            dispatcher.dispatch(&data.world);
         }
 
         Trans::None

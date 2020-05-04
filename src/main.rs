@@ -19,11 +19,6 @@ mod entity;
 mod resource;
 mod system;
 
-use crate::system::{
-    Collisions, ControlPlayer, DebugBoxes, LasersDamageAsteroids, LasersDamageSmallAsteroids,
-    LasersExpire, MoveObjects, ShipCollidesWithAsteroids, ShipRespawns,
-};
-
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
 
@@ -48,26 +43,9 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderUi::default()),
         )?
         .with_bundle(input_bundle)?
-        .with_bundle(UiBundle::<StringBindings>::new())?
-        .with(MoveObjects, "move_objects_system", &[])
-        .with(DebugBoxes, "debug_boxes", &[])
-        .with(ControlPlayer, "control_player_system", &[])
-        .with(Collisions, "collisions_system", &[])
-        .with(LasersExpire, "lasers_expire", &[])
-        .with(LasersDamageAsteroids, "lasers_damage_asteroids", &[])
-        // .with(ShipRespawns, "ship_respawns", &[])
-        // .with(
-        //     LasersDamageSmallAsteroids,
-        //     "lasers_damage_small_asteroids",
-        //     &[],
-        // );
-        // .with(
-        //     ShipCollidesWithAsteroids,
-        //     "ships_collide_with_asteroids",
-        //     &[],
-        // );
+        .with_bundle(UiBundle::<StringBindings>::new())?;
 
-    let mut game = Application::new(resources, title_state::TitleState, game_data)?;
+    let mut game = Application::new(resources, title_state::TitleState::default(), game_data)?;
     game.run();
 
     Ok(())
