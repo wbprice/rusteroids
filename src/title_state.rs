@@ -1,17 +1,19 @@
 use amethyst::{
     assets::{AssetStorage, Handle, Loader},
+    core::math::geometry::Point2,
     core::transform::Transform,
     ecs::prelude::Entity,
     prelude::*,
-    renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture},
+    renderer::{
+        debug_drawing::{DebugLines, DebugLinesComponent, DebugLinesParams},
+        palette::Srgba,
+        Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture,
+    },
     ui::{Anchor, FontAsset, TtfFormat, UiText, UiTransform},
     window::ScreenDimensions,
 };
 
-use crate::{
-    entity::{init_asteroid},
-    resource::SpriteResource
-};
+use crate::{entity::init_asteroid, resource::SpriteResource};
 
 pub struct TitleState;
 
@@ -19,6 +21,9 @@ impl SimpleState for TitleState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
+
+        world.insert(DebugLines::new());
+        world.insert(DebugLinesParams { line_width: 2.0 });
 
         load_sprites(world);
         init_camera(world, &dimensions);
@@ -74,6 +79,14 @@ fn init_title(world: &mut World) {
             100.,
         ))
         .build();
+
+    let mut debug_component = DebugLinesComponent::new();
+    debug_component.add_rectangle_2d(
+        Point2::new(0., 100.),
+        Point2::new(0., 100.),
+        1.,
+        Srgba::new(0.3, 0.3, 1.0, 1.0),
+    );
 
     world.insert(Label {
         entity: label_entity,
